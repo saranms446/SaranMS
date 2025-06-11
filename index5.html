@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Internship Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #2e86de;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #1c60b3;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div id="formPage">
+      <h1>Internship Profile Form</h1>
+      <form id="profileForm">
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email Address" required>
+        <input type="text" id="domain" placeholder="Internship Domain" required>
+        <input type="text" id="roles" placeholder="Roles Played (comma separated)" required>
+        <input type="date" id="startDate" required>
+        <input type="date" id="endDate" required>
+        <button type="submit">Next: Generate Offer Letter</button>
+      </form>
+    </div>
+
+    <div id="offerPage" class="hidden">
+      <h1>Generate Offer Letter</h1>
+      <button id="generateOffer">Generate Offer Letter PDF</button>
+    </div>
+
+    <div id="certificatePage" class="hidden">
+      <h1>Generate Internship Certificate</h1>
+      <button id="generateCertificate">Generate Certificate PDF</button>
+    </div>
+
+    <div id="successPage" class="hidden">
+      <h1>Success!</h1>
+      <p>Offer Letter and Certificate successfully generated.</p>
+    </div>
+  </div>
+
+  <script>
+    let formData = {};
+
+    document.getElementById("profileForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      formData = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        domain: document.getElementById("domain").value,
+        roles: document.getElementById("roles").value,
+        startDate: document.getElementById("startDate").value,
+        endDate: document.getElementById("endDate").value,
+      };
+
+      document.getElementById("formPage").classList.add("hidden");
+      document.getElementById("offerPage").classList.remove("hidden");
+    });
+
+    document.getElementById("generateOffer").addEventListener("click", function() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const text = [
+        "Internship Offer Letter",
+        "",
+        `Dear ${formData.name},`,
+        "",
+        `Congratulations! You have been selected for an internship in the domain of \"${formData.domain}\".`,
+        `Your internship is scheduled to begin on ${formData.startDate}.`,
+        "Please report on time and stay connected with HR for further instructions.",
+        "",
+        "Regards,",
+        "HR Department"
+      ];
+      doc.text(text, 10, 10);
+      doc.save(`${formData.name.replace(/ /g, '_')}_Offer_Letter.pdf`);
+
+      document.getElementById("offerPage").classList.add("hidden");
+      document.getElementById("certificatePage").classList.remove("hidden");
+    });
+
+    document.getElementById("generateCertificate").addEventListener("click", function() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const text = [
+        "Internship Completion Certificate",
+        "",
+        `This is to certify that ${formData.name} has successfully completed their internship in the domain \"${formData.domain}\".`,
+        `The internship duration was from ${formData.startDate} to ${formData.endDate}.`,
+        `Roles performed: ${formData.roles}.`,
+        "",
+        "We thank the intern for their contributions and wish them the best.",
+        "",
+        "HR Department"
+      ];
+      doc.text(text, 10, 10);
+      doc.save(`${formData.name.replace(/ /g, '_')}_Internship_Certificate.pdf`);
+
+      document.getElementById("certificatePage").classList.add("hidden");
+      document.getElementById("successPage").classList.remove("hidden");
+    });
+  </script>
+</body>
+</html>
